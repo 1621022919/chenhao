@@ -1,0 +1,185 @@
+<!--
+	此示例下载自 https://echarts.apache.org/examples/zh/editor.html?c=calendar-pie
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body bgcolor="#00000" style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%" ></div>
+
+  
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+  <!-- Uncomment this line if you want to dataTool extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.0/dist/extension/dataTool.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use gl extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use map
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/china.js"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
+  -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=YOUR_API_KEY"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.0/dist/extension/bmap.min.js"></script>
+  -->
+
+  <script type="text/javascript">
+
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    const cellSize = [80, 50];
+const pieRadius = 15;
+function getVirtulData() {
+  let date = +echarts.number.parseDate('2017-02-01');
+  let end = +echarts.number.parseDate('2017-03-01');
+  let dayTime = 3600 * 24 * 1000;
+  let data = [];
+  for (let time = date; time < end; time += dayTime) {
+    data.push([
+      echarts.format.formatTime('yyyy-MM-dd', time),
+      Math.floor(Math.random() * 10000)
+    ]);
+  }
+  return data;
+}
+function getPieSeries(scatterData, chart) {
+  return scatterData.map(function (item, index) {
+    var center = chart.convertToPixel('calendar', item);
+    return {
+      id: index + 'pie',
+      type: 'pie',
+      center: center,
+      label: {
+        formatter: '{c}',
+        position: 'inside'
+      },
+      radius: pieRadius,
+      data: [
+        { name: '水质异常', value: Math.round(Math.random() * 6) },
+        { name: '空气异常', value: Math.round(Math.random() * 6) },
+        { name: '噪音异常', value: Math.round(Math.random() * 6) }
+      ]
+    };
+  });
+}
+function getPieSeriesUpdate(scatterData, chart) {
+  return scatterData.map(function (item, index) {
+    var center = chart.convertToPixel('calendar', item);
+    return {
+      id: index + 'pie',
+      center: center
+    };
+  });
+}
+var scatterData = getVirtulData();
+option = {
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    top:'20%',
+    containLabel: true
+  },
+  title: {
+    textStyle:{
+      color:'white',
+    },
+    text: '\n监测日历'
+  },
+  // backgroundColor:'rgba(0, 0, 0)',
+  tooltip: {},
+  legend: {
+    data: ['Work', 'Entertainment', 'Sleep'],
+    bottom: 20
+  },
+  calendar: {
+    top: 'middle',
+    left: 'center',
+    orient: 'vertical',
+    cellSize: cellSize,
+    yearLabel: {
+      show: false,
+      fontSize: 30
+    },
+  //   grid: {
+  //   left: '3%',
+  //   right: '4%',
+  //   top: '20%',
+  //   containLabel: true
+  // },
+    dayLabel: {
+
+      margin: 20,
+      firstDay: 1,
+      textStyle:{
+
+      color:'white',
+    },
+      nameMap: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    monthLabel: {
+      show: false
+    },
+    range: ['2017-02'],
+    // color: "rgba(0, 0, 0,1)",
+    // borderColor: "rgba(27, 26, 26,1)",
+    itemStyle: {
+        normal: {
+            color: "rgba(0, 0, 0)"
+        }
+    }
+  },
+  series: [
+    {
+      id: 'label',
+      type: 'scatter',
+      coordinateSystem: 'calendar',
+      symbolSize: 1,
+      label: {
+        show: true,
+        formatter: function (params) {
+          return echarts.format.formatTime('dd', params.value[0]);
+        },
+        offset: [-cellSize[0] / 2 + 10, -cellSize[1] / 2 + 10],
+        fontSize: 14
+      },
+      data: scatterData
+    }
+  ]
+};
+let pieInitialized;
+setTimeout(function () {
+  pieInitialized = true;
+  myChart.setOption({
+    series: getPieSeries(scatterData, myChart)
+  });
+}, 10);
+app.onresize = function () {
+  if (pieInitialized) {
+    myChart.setOption({
+      series: getPieSeriesUpdate(scatterData, myChart)
+    });
+  }
+};
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>

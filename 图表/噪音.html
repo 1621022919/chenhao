@@ -1,0 +1,147 @@
+<!--
+	此示例下载自 https://echarts.apache.org/examples/zh/editor.html?c=pictorialBar-dotted
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    // Generate data
+let category = [];
+let dottedBase = +new Date();
+let lineData = [];
+let barData = [];
+for (let i = 0; i < 20; i++) {
+  let date = new Date((dottedBase += 3600 * 6 * 1000));
+  category.push(
+    [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-')
+  );
+  let b = Math.random() * 100;
+  let d = Math.random() * 100;
+  barData.push(b);
+  lineData.push(d + b);
+}
+// option
+option = {
+  title: {
+    textStyle:{
+
+      color:'white',
+    },
+    text: '空气质量'
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    top:'15%',
+    containLabel: true
+  },
+  backgroundColor: '#black',
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
+  legend: {
+    data: ['最高值', '平均值'],
+    textStyle: {
+      color: '#ccc'
+    }
+  },
+  xAxis: {
+    data: category,
+    axisLine: {
+      lineStyle: {
+        color: '#ccc'
+      }
+    }
+  },
+  yAxis: {
+    max:200,
+    splitLine: { show: false },
+    axisLine: {
+      lineStyle: {
+        color: '#ccc'
+      }
+    }
+  },
+  series: [
+    {
+      name: 'line',
+      type: 'line',
+      smooth: true,
+      showAllSymbol: true,
+      symbol: 'emptyCircle',
+      symbolSize: 15,
+      data: lineData
+    },
+    {
+      name: '平均值',
+      type: 'bar',
+      barWidth: 10,
+      itemStyle: {
+        borderRadius: 5,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#14c8d4' },
+          { offset: 1, color: '#43eec6' }
+        ])
+      },
+      data: barData
+    },
+    {
+      name: '最高值',
+      type: 'bar',
+      barGap: '-100%',
+      barWidth: 10,
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: 'rgba(20,200,212,0.5)' },
+          { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
+          { offset: 1, color: 'rgba(20,200,212,0)' }
+        ])
+      },
+      z: -12,
+      data: lineData
+    },
+    {
+      name: 'dotted',
+      type: 'pictorialBar',
+      symbol: 'rect',
+      itemStyle: {
+        color: '#0f375f'
+      },
+      symbolRepeat: true,
+      symbolSize: [12, 4],
+      symbolMargin: 1,
+      z: -10,
+      data: lineData
+    }
+  ]
+};
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>

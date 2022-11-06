@@ -1,0 +1,126 @@
+<!--
+	此示例下载自 https://echarts.apache.org/examples/zh/editor.html?c=bar-gradient
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  
+  <script type="text/javascript" src="./echarts.min.js"></script>
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    // prettier-ignore
+let dataAxis = ['点', '击', '柱', '子', '或', '者', '两', '指', '在', '触', '屏', '上', '滑', '动', '能', '够', '自', '动', '缩', '放'];
+// prettier-ignore
+let data = [220, 182, 191, 234, 290, 330, 310, 123, 442, 321, 90, 149, 210, 122, 133, 334, 198, 123, 125, 220];
+let yMax = 500;
+let dataShadow = [];
+for (let i = 0; i < data.length; i++) {
+  dataShadow.push(yMax);
+}
+option = {
+  grid: {
+      x: 50,
+      y: 50,
+      x2: 20,
+      y2: 20
+    },
+  backgroundColor:'rgba(0, 0, 0)',
+  title: {
+    text: '温度变化',
+    top:'15px',
+    textStyle:{
+
+      color:'white',
+    }
+  },
+  xAxis: {
+    data: dataAxis,
+    axisLabel: {
+      inside: true,
+      color: 'white',
+    },
+    axisTick: {
+      show: false
+    },
+    axisLine: {
+      show: false
+    },
+    z: 10
+  },
+  yAxis: {
+    splitLine: {
+    show: false 
+},
+    axisLine: {
+      show: false
+    },
+    axisTick: {
+      show: false
+    },
+    axisLabel: {
+      color: 'white'
+    }
+  },
+  dataZoom: [
+    {
+      type: 'inside'
+    }
+  ],
+  series: [
+    {
+      type: 'bar',
+      showBackground: true,
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#83bff6' },
+          { offset: 0.5, color: '#188df0' },
+          { offset: 1, color: '#188df0' }
+        ])
+      },
+      emphasis: {
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#2378f7' },
+            { offset: 0.7, color: '#2378f7' },
+            { offset: 1, color: '#83bff6' }
+          ])
+        }
+      },
+      data: data
+    }
+  ]
+};
+// Enable data zoom when user click bar.
+const zoomSize = 6;
+myChart.on('click', function (params) {
+  console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)]);
+  myChart.dispatchAction({
+    type: 'dataZoom',
+    startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+    endValue:
+      dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+  });
+});
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
